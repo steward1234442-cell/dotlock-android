@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dotlock - Carian Nota & Jawapan Pelajar</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f6f8; color: #333; }
+        h2 { color: #2c3e50; }
+        .search-box { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
+        .card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card h3 { margin: 0 0 5px 0; color: #007bff; font-size: 18px; }
+        .card p { margin: 0; color: #555; }
+    </style>
+</head>
+<body>
+
+    <h2>Dotlock Pelajar</h2>
+    <p>Taip kata kunci soalan atau tajuk nota di bawah:</p>
+    
+    <input type="text" id="searchInput" class="search-box" placeholder="Cari topik (contoh: Matematik, Sains)..." onkeyup="searchNote()">
+
+    <div id="notesList">
+        <div class="card">
+            <h3>Matematik: Formula Luas Segitiga</h3>
+            <p>Luas = 1/2 × Tapak × Tinggi</p>
+        </div>
+        <div class="card">
+            <h3>Sains: Proses Fotosintesis</h3>
+            <p>Tumbuhan menghasilkan makanan menggunakan cahaya matahari, air, dan karbon dioksida.</p>
+        </div>
+        <div class="card">
+            <h3>Sejarah: Tarikh Kemerdekaan Malaysia</h3>
+            <p>3 Ogos / 31 Ogos 1957.</p>
+        </div>
+    </div>
+
+    <script>
+        function searchNote() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                let text = cards[i].innerText.toLowerCase();
+                if (text.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
