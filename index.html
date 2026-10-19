@@ -5,37 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dotlock - Carian Nota & Jawapan Pelajar</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f6f8; color: #333; }
-        h2 { color: #2c3e50; }
-        .search-box { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
-        .card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card h3 { margin: 0 0 5px 0; color: #007bff; font-size: 18px; }
-        .card p { margin: 0; color: #555; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f0f2f5; color: #333; }
+        h2 { color: #1a2a3a; margin-bottom: 5px; }
+        p.subtitle { color: #666; font-size: 14px; margin-top: 0; margin-bottom: 20px; }
+        .search-box { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 20px; outline: none; transition: 0.3s; }
+        .search-box:focus { border-color: #007bff; box-shadow: 0 0 8px rgba(0,123,255,0.2); }
+        .card { background: white; padding: 15px 20px; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
+        .card h3 { margin: 0; color: #007bff; font-size: 16px; }
+        .tag { background: #e7f3ff; color: #007bff; font-size: 12px; padding: 4px 8px; border-radius: 5px; font-weight: bold; }
+        .answer { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; color: #444; font-size: 14px; line-height: 1.5; }
+        .hint { font-size: 11px; color: #888; margin-top: 4px; display: block; }
     </style>
 </head>
 <body>
 
     <h2>Dotlock Pelajar</h2>
-    <p>Taip kata kunci soalan atau tajuk nota di bawah:</p>
+    <p class="subtitle">Tekan pada kad untuk melihat jawapan penuh.</p>
     
-    <input type="text" id="searchInput" class="search-box" placeholder="Cari topik (contoh: Matematik, Sains)..." onkeyup="searchNote()">
+    <input type="text" id="searchInput" class="search-box" placeholder="Cari topik (contoh: Matematik, Sains, Sejarah)..." onkeyup="searchNote()">
 
     <div id="notesList">
-        <div class="card">
-            <h3>Matematik: Formula Luas Segitiga</h3>
-            <p>Luas = 1/2 × Tapak × Tinggi</p>
+        <!-- Kad 1 -->
+        <div class="card" onclick="toggleAnswer(this)">
+            <div class="card-header">
+                <h3>Formula Luas Segitiga</h3>
+                <span class="tag">Matematik</span>
+            </div>
+            <span class="hint">Sentuh untuk lihat jawapan ▼</span>
+            <div class="answer">
+                <strong>Jawapan / Formula:</strong><br>
+                Luas = ½ × Tapak × Tinggi<br><br>
+                <em>Contoh:</em> Jika tapak = 6cm dan tinggi = 4cm, Luas = ½ × 6 × 4 = 12 cm².
+            </div>
         </div>
-        <div class="card">
-            <h3>Sains: Proses Fotosintesis</h3>
-            <p>Tumbuhan menghasilkan makanan menggunakan cahaya matahari, air, dan karbon dioksida.</p>
+
+        <!-- Kad 2 -->
+        <div class="card" onclick="toggleAnswer(this)">
+            <div class="card-header">
+                <h3>Proses Fotosintesis</h3>
+                <span class="tag">Sains</span>
+            </div>
+            <span class="hint">Sentuh untuk lihat jawapan ▼</span>
+            <div class="answer">
+                <strong>Penerangan:</strong><br>
+                Proses tumbuhan hijau membuat makanan sendiri menggunakan:<br>
+                • Cahaya matahari<br>
+                • Karbon dioksida<br>
+                • Air & Klorofil<br><br>
+                <strong>Hasil:</strong> Glukosa + Oksigen.
+            </div>
         </div>
-        <div class="card">
-            <h3>Sejarah: Tarikh Kemerdekaan Malaysia</h3>
-            <p>3 Ogos / 31 Ogos 1957.</p>
+
+        <!-- Kad 3 -->
+        <div class="card" onclick="toggleAnswer(this)">
+            <div class="card-header">
+                <h3>Tarikh & Tokoh Kemerdekaan</h3>
+                <span class="tag">Sejarah</span>
+            </div>
+            <span class="hint">Sentuh untuk lihat jawapan ▼</span>
+            <div class="answer">
+                <strong>Jawapan:</strong><br>
+                • <strong>Tarikh:</strong> 31 Ogos 1957<br>
+                • <strong>Lokasi:</strong> Stadium Merdeka, Kuala Lumpur<br>
+                • <strong>Bapa Kemerdekaan:</strong> Tunku Abdul Rahman Putra Al-Haj.
+            </div>
+        </div>
+
+        <!-- Kad 4 -->
+        <div class="card" onclick="toggleAnswer(this)">
+            <div class="card-header">
+                <h3>Simple Past Tense vs Present Perfect</h3>
+                <span class="tag">Bahasa Inggeris</span>
+            </div>
+            <span class="hint">Sentuh untuk lihat jawapan ▼</span>
+            <div class="answer">
+                <strong>Penggunaan:</strong><br>
+                • <strong>Past Tense:</strong> Perkara yang dah selesai pada masa spesifik (e.g., <em>I ate rice yesterday</em>).<br>
+                • <strong>Present Perfect:</strong> Perkara yang dah berlaku tapi masih ada kaitan dengan sekarang (e.g., <em>I have eaten rice</em>).
+            </div>
         </div>
     </div>
 
     <script>
+        function toggleAnswer(cardElement) {
+            let answerDiv = cardElement.querySelector('.answer');
+            let hintText = cardElement.querySelector('.hint');
+            
+            if (answerDiv.style.display === "block") {
+                answerDiv.style.display = "none";
+                hintText.innerText = "Sentuh untuk lihat jawapan ▼";
+            } else {
+                answerDiv.style.display = "block";
+                hintText.innerText = "Sentuh untuk tutup ▲";
+            }
+        }
+
         function searchNote() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             let cards = document.getElementsByClassName('card');
