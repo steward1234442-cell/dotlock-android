@@ -1,917 +1,354 @@
-html
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dotlock Pro - Aplikasi Pembelajaran Lengkap</title>
-    <!-- Tailwind CSS CDN for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#008069',
-                            dark: '#005643',
-                            light: '#00a884',
-                            surface: '#111b21',
-                            cardDark: '#202c33',
-                            borderDark: '#222d34'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Dotlock Pro - Mega Edition</title>
     <style>
-        /* Hide scrollbars for slick mobile view */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        * { -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #075e54;
+            --primary-light: #128c7e;
+            --bg-light: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #111b21;
+            --text-sub: #667781;
+            --border-color: #e9edef;
+        }
+
+        body.dark-mode {
+            --primary: #1f1f1f;
+            --primary-light: #25d366;
+            --bg-light: #111b21;
+            --card-bg: #202c33;
+            --text-main: #e9edef;
+            --text-sub: #8696a0;
+            --border-color: #222d34;
+        }
+
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; padding: 0; background-color: var(--bg-light); color: var(--text-main); padding-bottom: 75px; transition: background 0.3s, color 0.3s; }
+
+        /* Header */
+        .app-header { background-color: var(--primary); color: white; padding: 14px 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; }
+        .app-title { display: flex; align-items: center; gap: 10px; }
+        .app-title h1 { margin: 0; font-size: 18px; font-weight: 600; }
+        .back-btn { background: none; border: none; color: white; font-size: 18px; cursor: pointer; display: none; }
+
+        /* Main Container */
+        .tab-content { display: none; padding: 14px; }
+        .tab-content.active { display: block; }
+
+        /* Subject Grid (Halaman Utama Subjek) */
+        .subject-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
+        .subject-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .subject-card:active { transform: scale(0.97); }
+        .subject-icon { font-size: 32px; margin-bottom: 8px; }
+        .subject-name { font-weight: 600; font-size: 14px; color: var(--text-main); }
+        .subject-desc { font-size: 11px; color: var(--text-sub); margin-top: 4px; }
+
+        /* Detail View Subjek & Bab */
+        #subjectDetailView { display: none; padding: 14px; }
+        .chapter-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .chapter-title { font-weight: bold; color: var(--primary-light); font-size: 15px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .chapter-content { font-size: 13.5px; color: var(--text-main); line-height: 1.6; border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 8px; }
+
+        /* Search & Filter */
+        .search-container { margin-bottom: 14px; }
+        .search-box { width: 100%; padding: 11px 14px 11px 38px; border: 1px solid var(--border-color); border-radius: 20px; outline: none; background: var(--card-bg); color: var(--text-main); font-size: 14px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%238696a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'); background-repeat: no-repeat; background-position: 12px center; }
+
+        /* Kuiz & Ujian */
+        .quiz-card { background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); }
+        .quiz-opt { width: 100%; text-align: left; padding: 11px 14px; margin-top: 8px; border: 1px solid var(--border-color); background: var(--bg-light); color: var(--text-main); border-radius: 8px; font-size: 13.5px; cursor: pointer; }
+        .quiz-result { margin-top: 10px; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 13px; display: none; }
+        .correct { background: rgba(40, 167, 69, 0.15); color: #28a745; }
+        .wrong { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+
+        /* Tetapan */
+        .setting-group { background: var(--card-bg); border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        .setting-item { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .setting-item:last-child { border-bottom: none; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-light); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
+        .nav-item { text-align: center; color: var(--text-sub); font-size: 11px; cursor: pointer; flex: 1; font-weight: 500; }
+        .nav-item.active { color: var(--primary-light); font-weight: 600; }
+        .nav-item div { font-size: 20px; margin-bottom: 2px; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 dark:bg-brand-surface dark:text-gray-100 min-h-screen pb-20 transition-colors duration-200">
+<body class="dark-mode">
 
-    <!-- Top App Bar -->
-    <header class="sticky top-0 z-50 bg-brand text-white shadow-md transition-colors duration-200">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <button id="backBtn" onclick="navBack()" class="hidden text-xl focus:outline-none p-1 rounded-full hover:bg-brand-dark">
-                    ←
-                </button>
-                <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg shadow-inner">
-                    D
-                </div>
-                <div>
-                    <h1 id="appHeaderTitle" class="font-bold text-lg leading-tight">Dotlock Pro</h1>
-                    <p id="appHeaderSubtitle" class="text-xs text-white/80">Pusat Pembelajaran & Ujian Subjek</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-brand-dark text-lg" title="Tukar Mod Malam">
-                    🌙
-                </button>
-            </div>
+    <!-- Header -->
+    <div class="app-header">
+        <div class="app-title">
+            <button id="backBtn" class="back-btn" onclick="goBackToHome()">←</button>
+            <h1 id="headerTitle">Dotlock Pro Mega</h1>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto min-h-[calc(100vh-120px)]">
-
-        <!-- TAB 1: SUBJEK & NOTA (HOMEPAGE / HUB) -->
-        <section id="view-subjects" class="tab-view block p-4">
+    <!-- TAB 1: SENARAI SEMUA SUBJEK (NOTA & BAB 1 - AKHIR) -->
+    <div id="tab-notes" class="tab-content active">
+        
+        <!-- Halaman Utama Pilihan Subjek -->
+        <div id="subjectHome">
+            <p style="margin-top:0; font-size:13px; color:var(--text-sub);">Pilih subjek untuk membaca nota lengkap dari Bab 1 hingga Bab Akhir beserta teknik menjawab:</p>
             
-            <!-- Global Search Box -->
-            <div class="relative mb-4">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">🔍</span>
-                <input type="text" id="globalSearchInput" onkeyup="filterSubjectsAndNotes()" placeholder="Cari subjek, nota, atau soalan..." 
-                    class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-brand-cardDark border border-gray-200 dark:border-brand-borderDark rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand">
+            <div class="search-container">
+                <input type="text" id="searchHome" class="search-box" placeholder="Cari subjek..." onkeyup="searchSubjects()">
             </div>
 
-            <!-- Subject Grid Cards -->
-            <div id="subjectGridHeader" class="flex justify-between items-center mb-3">
-                <h2 class="font-bold text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wider">Senarai Subjek</h2>
-                <span class="text-xs bg-brand/10 text-brand dark:text-brand-light font-bold px-2.5 py-1 rounded-full">12 Subjek Available</span>
-            </div>
-
-            <div id="subjectsGrid" class="grid grid-cols-2 gap-3 mb-6">
-                <!-- Subject cards dynamically rendered via JS -->
-            </div>
-        </section>
-
-        <!-- DEDICATED SINGLE SUBJECT VIEW -->
-        <section id="view-single-subject" class="hidden p-4">
-            <!-- Subject Banner -->
-            <div id="subjectBanner" class="p-4 rounded-2xl text-white mb-4 shadow-sm transition-all duration-300">
-                <div class="flex items-center justify-between mb-2">
-                    <span id="subBannerIcon" class="text-3xl">📐</span>
-                    <span id="subBannerBadge" class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-semibold backdrop-blur-sm">SPM / PT3</span>
+            <div class="subject-grid" id="gridSubjects">
+                <div class="subject-card" onclick="openSubject('Matematik')">
+                    <div class="subject-icon">📐</div>
+                    <div class="subject-name">Matematik</div>
+                    <div class="subject-desc">Bab 1 hingga Bab 9</div>
                 </div>
-                <h2 id="subBannerTitle" class="text-2xl font-bold">Matematik</h2>
-                <p id="subBannerDesc" class="text-xs text-white/90 mt-1">Nota lengkap, formula, & jalan kerja terperinci langkah demi langkah.</p>
-            </div>
-
-            <!-- Internal Search Filter inside Subject View -->
-            <div class="relative mb-4">
-                <input type="text" id="subjectNoteSearch" onkeyup="filterSubjectNotes()" placeholder="Cari topik dalam subjek ini..." 
-                    class="w-full px-4 py-2 bg-white dark:bg-brand-cardDark border border-gray-200 dark:border-brand-borderDark rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand">
-            </div>
-
-            <!-- Notes List Container -->
-            <div id="subjectNotesContainer" class="space-y-3">
-                <!-- Notes cards injected dynamically -->
-            </div>
-        </section>
-
-        <!-- TAB 2: KUIZ & LATIHAN -->
-        <section id="view-quiz" class="tab-view hidden p-4">
-            <div class="mb-4">
-                <h2 class="text-lg font-bold">Latihan & Kuiz Subjek</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Pilih subjek untuk memulakan latihan soalan pilihan jawapan.</p>
-            </div>
-
-            <!-- Quiz Subject Chips Filter -->
-            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-4" id="quizSubjectChips">
-                <!-- Rendered dynamically -->
-            </div>
-
-            <!-- Score Summary Card -->
-            <div class="bg-brand/10 border border-brand/20 dark:bg-brand-cardDark p-4 rounded-2xl mb-4 flex justify-between items-center">
-                <div>
-                    <span class="text-xs font-semibold text-brand dark:text-brand-light uppercase">Pencapaian Kuiz Sesi Ini</span>
-                    <div id="quizScoreText" class="text-xl font-extrabold text-gray-800 dark:text-white">0 / 0 Dijawab Betul</div>
+                <div class="subject-card" onclick="openSubject('Sains')">
+                    <div class="subject-icon">🔬</div>
+                    <div class="subject-name">Sains</div>
+                    <div class="subject-desc">Bab 1 hingga Bab 10</div>
                 </div>
-                <div id="quizScoreBadge" class="text-2xl font-black bg-brand text-white px-3 py-1.5 rounded-xl shadow-sm">
-                    0%
+                <div class="subject-card" onclick="openSubject('Bahasa Melayu')">
+                    <div class="subject-icon">🇲🇾</div>
+                    <div class="subject-name">Bahasa Melayu</div>
+                    <div class="subject-desc">Karangan & Tatabahasa</div>
+                </div>
+                <div class="subject-card" onclick="openSubject('Sejarah')">
+                    <div class="subject-icon">📜</div>
+                    <div class="subject-name">Sejarah</div>
+                    <div class="subject-desc">Bab 1 hingga Bab 8</div>
+                </div>
+                <div class="subject-card" onclick="openSubject('English')">
+                    <div class="subject-icon">🔤</div>
+                    <div class="subject-name">English</div>
+                    <div class="subject-desc">Grammar & Essays</div>
+                </div>
+                <div class="subject-card" onclick="openSubject('Fizik')">
+                    <div class="subject-icon">⚡</div>
+                    <div class="subject-name">Fizik</div>
+                    <div class="subject-desc">Bab Asas & Formula</div>
                 </div>
             </div>
-
-            <!-- Quiz Questions Container -->
-            <div id="quizQuestionsContainer" class="space-y-4">
-                <!-- Rendered dynamically -->
-            </div>
-        </section>
-
-        <!-- TAB 3: UJIAN SIMULASI (EXAM MODE) -->
-        <section id="view-exam" class="tab-view hidden p-4">
-            <!-- Exam Intro Screen -->
-            <div id="examIntroCard" class="bg-white dark:bg-brand-cardDark p-5 rounded-2xl border border-gray-200 dark:border-brand-borderDark shadow-sm">
-                <div class="text-center py-4">
-                    <span class="text-5xl">⏱️</span>
-                    <h2 class="text-xl font-bold mt-3">Ujian Simulasi Komprehensif</h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto">
-                        Ujian masa nyata merangkumi soalan gabungan semua subjek. Sila selesaikan ujian sebelum pemasa tamat.
-                    </p>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-brand-surface p-4 rounded-xl my-4 text-xs space-y-2 border border-gray-200 dark:border-brand-borderDark">
-                    <div class="flex justify-between"><span>Jumlah Soalan:</span> <strong class="text-gray-800 dark:text-white">10 Soalan</strong></div>
-                    <div class="flex justify-between"><span>Masa Diberikan:</span> <strong class="text-gray-800 dark:text-white">05:00 Minit</strong></div>
-                    <div class="flex justify-between"><span>Format Jawapan:</span> <strong class="text-gray-800 dark:text-white">Pilihan Berganda (MCQ)</strong></div>
-                </div>
-
-                <button onclick="startExam()" class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded-xl shadow-md transition-all text-sm flex items-center justify-center gap-2">
-                    🚀 Mula Ujian Sekarang
-                </button>
-            </div>
-
-            <!-- Active Exam Screen (Hidden initially) -->
-            <div id="examActiveCard" class="hidden space-y-4">
-                <!-- Timer Bar -->
-                <div class="sticky top-14 z-40 bg-white dark:bg-brand-cardDark p-3 rounded-xl border border-gray-200 dark:border-brand-borderDark shadow-sm flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                        <span class="animate-pulse">⏳</span>
-                        <span class="text-xs font-semibold">Masa Baki:</span>
-                    </div>
-                    <span id="examTimer" class="font-mono text-lg font-bold text-red-500">05:00</span>
-                </div>
-
-                <!-- Exam Questions List -->
-                <div id="examQuestionsList" class="space-y-4">
-                    <!-- Dynamic Exam Questions -->
-                </div>
-
-                <!-- Submit Button -->
-                <button onclick="submitExam()" class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded-xl shadow-lg transition-all text-sm my-6">
-                    ✅ Hantar & Semak Keputusan Ujian
-                </button>
-            </div>
-
-            <!-- Exam Result Screen (Hidden initially) -->
-            <div id="examResultCard" class="hidden bg-white dark:bg-brand-cardDark p-5 rounded-2xl border border-gray-200 dark:border-brand-borderDark text-center space-y-4">
-                <div class="text-4xl">🏆</div>
-                <h2 class="text-xl font-bold">Keputusan Ujian Simulasi</h2>
-                <div id="examFinalGrade" class="text-4xl font-extrabold text-brand dark:text-brand-light">A+</div>
-                
-                <div class="grid grid-cols-2 gap-3 text-left">
-                    <div class="bg-gray-50 dark:bg-brand-surface p-3 rounded-xl border border-gray-200 dark:border-brand-borderDark">
-                        <span class="text-[10px] text-gray-500 uppercase font-bold">Markah</span>
-                        <div id="examScoreDetail" class="text-lg font-bold text-gray-800 dark:text-white">0 / 10</div>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-brand-surface p-3 rounded-xl border border-gray-200 dark:border-brand-borderDark">
-                        <span class="text-[10px] text-gray-500 uppercase font-bold">Peratusan</span>
-                        <div id="examPercentDetail" class="text-lg font-bold text-gray-800 dark:text-white">0%</div>
-                    </div>
-                </div>
-
-                <div id="examAnalysisText" class="text-xs text-gray-600 dark:text-gray-300 p-3 bg-brand/5 rounded-xl text-left border border-brand/20">
-                    Analisis prestasi ujian anda akan dipaparkan di sini.
-                </div>
-
-                <button onclick="resetExam()" class="w-full bg-gray-200 dark:bg-brand-surface hover:bg-gray-300 text-gray-800 dark:text-gray-200 font-bold py-3 rounded-xl text-sm transition-all">
-                    🔄 Cuba Ujian Sekali Lagi
-                </button>
-            </div>
-        </section>
-
-        <!-- TAB 4: TETAPAN & PROFILE -->
-        <section id="view-settings" class="tab-view hidden p-4 space-y-4">
-            <h2 class="text-lg font-bold">Tetapan Aplikasi</h2>
-
-            <div class="bg-white dark:bg-brand-cardDark rounded-2xl border border-gray-200 dark:border-brand-borderDark overflow-hidden divide-y divide-gray-100 dark:divide-brand-borderDark">
-                <div class="p-4 flex justify-between items-center">
-                    <div>
-                        <div class="font-semibold text-sm">🌙 Mod Gelap (Dark Mode)</div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">Sesuaikan dengan tema pilihan mata anda</div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="darkModeSwitch" onchange="toggleDarkMode()" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-                    </label>
-                </div>
-
-                <div class="p-4 flex justify-between items-center">
-                    <div>
-                        <div class="font-semibold text-sm">🔔 Notifikasi Pembelajaran</div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">Peringatan ulangkaji harian</div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" checked class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-brand-cardDark p-4 rounded-2xl border border-gray-200 dark:border-brand-borderDark">
-                <h3 class="font-bold text-sm mb-2 text-brand dark:text-brand-light">Status Pembelajaran Anda</h3>
-                <div class="text-xs space-y-1.5 text-gray-600 dark:text-gray-300">
-                    <p>• Versi Aplikasi: <strong class="text-gray-800 dark:text-white">Dotlock Pro v4.0 (Enterprise)</strong></p>
-                    <p>• Status Iklan: <strong class="text-green-600 dark:text-green-400 font-bold">Bebas Iklan 100%</strong></p>
-                    <p>• Subjek Didaftarkan: <strong class="text-gray-800 dark:text-white">12 Subjek Sekolah Lengkap</strong></p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Bottom Navigation Bar (WhatsApp / Native Mobile App Style) -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-brand-cardDark border-t border-gray-200 dark:border-brand-borderDark z-50 transition-colors duration-200">
-        <div class="max-w-md mx-auto flex justify-around py-2">
-            <button onclick="switchTab('subjects', this)" class="nav-btn text-brand dark:text-brand-light flex flex-col items-center flex-1 text-xs font-semibold transition-all">
-                <span class="text-xl mb-0.5">📚</span>
-                Nota & Subjek
-            </button>
-            <button onclick="switchTab('quiz', this)" class="nav-btn text-gray-400 flex flex-col items-center flex-1 text-xs font-medium transition-all">
-                <span class="text-xl mb-0.5">📝</span>
-                Kuiz
-            </button>
-            <button onclick="switchTab('exam', this)" class="nav-btn text-gray-400 flex flex-col items-center flex-1 text-xs font-medium transition-all">
-                <span class="text-xl mb-0.5">⏱️</span>
-                Ujian Simulasi
-            </button>
-            <button onclick="switchTab('settings', this)" class="nav-btn text-gray-400 flex flex-col items-center flex-1 text-xs font-medium transition-all">
-                <span class="text-xl mb-0.5">⚙️</span>
-                Tetapan
-            </button>
         </div>
-    </nav>
 
-    <!-- Application Logic & Comprehensive Educational Database -->
+        <!-- Halaman Dalam Subjek (Memaparkan Semua Bab & Cara Jawab) -->
+        <div id="subjectDetailView">
+            <div id="chapterContainer"></div>
+        </div>
+
+    </div>
+
+    <!-- TAB 2: KUIZ & LATIHAN SEMUA SUBJEK -->
+    <div id="tab-quiz" class="tab-content">
+        <h3 style="margin-top:0; font-size:16px;">🎯 Kuiz & Latihan Topikal</h3>
+        <p style="font-size:13px; color:var(--text-sub);">Uji kefahaman anda bagi setiap subjek.</p>
+
+        <div class="quiz-card">
+            <p style="margin-top:0; font-weight:500;"><strong>[Matematik] Soalan 1:</strong> Apakah hasil bagi perluasan ungkapan $(x + 3)(x + 2)$?</p>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1')">A. $x^2 + 5x + 5$</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'q1')">B. $x^2 + 5x + 6$</button>
+            <div id="q1" class="quiz-result"></div>
+        </div>
+
+        <div class="quiz-card">
+            <p style="margin-top:0; font-weight:500;"><strong>[Sains] Soalan 2:</strong> Organel sel manakah yang bertanggungjawab dalam proses penjanaan tenaga (respirasi)?</p>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2')">A. Kloroplas</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'q2')">B. Mitokondrion</button>
+            <div id="q2" class="quiz-result"></div>
+        </div>
+
+        <div class="quiz-card">
+            <p style="margin-top:0; font-weight:500;"><strong>[Sejarah] Soalan 3:</strong> Apakah perjanjian penting yang memeterai kemerdekaan Persekutuan Tanah Melayu 1957?</p>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'q3')">A. Perjanjian Persekutuan Tanah Melayu 1957</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q3')">B. Perjanjian Malayan Union</button>
+            <div id="q3" class="quiz-result"></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: UJIAN SIMULASI PENUH -->
+    <div id="tab-exam" class="tab-content">
+        <h3 style="margin-top:0; font-size:16px;">⏱️ Ujian Simulasi Peperiksaan</h3>
+        <p style="font-size:13px; color:var(--text-sub);">Mod peperiksaan sebenar merangkumi semua subjek utama.</p>
+        
+        <div class="chapter-box">
+            <div class="chapter-title">Simulasi SPM / PT3 Terbuka</div>
+            <div class="chapter-content">
+                Ujian ini mengandungi 30 soalan percubaan daripada pelbagai subjek dengan masa terhad 45 minit.<br><br>
+                <button class="quiz-opt" style="background:var(--primary-light); color:white; font-weight:bold; text-align:center;" onclick="alert('Mod Ujian Simulasi dimulakan! Sila jawab soalan dengan teliti.')">Mula Ujian Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: TETAPAN -->
+    <div id="tab-settings" class="tab-content">
+        <h3 style="margin-top:0; font-size:16px;">⚙️ Tetapan Aplikasi</h3>
+        <div class="setting-group">
+            <div class="setting-item">
+                <label>🌙 Mod Gelap (Dark Mode)</label>
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle" checked onchange="toggleDarkMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div class="setting-group">
+            <div class="setting-item" onclick="alert('Dotlock Pro Mega v5.0 - Bebas Iklan & Kandungan Penuh Bab 1 hingga Akhir.')" style="cursor:pointer;">
+                <label style="color:var(--primary-light); font-weight:600;">ℹ️ Perihal Versi Mega</label>
+                <span>v5.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('notes', this)">
+            <div>📚</div>Nota Bab
+        </div>
+        <div class="nav-item" onclick="switchTab('quiz', this)">
+            <div>🎯</div>Kuiz
+        </div>
+        <div class="nav-item" onclick="switchTab('exam', this)">
+            <div>⏱️</div>Ujian
+        </div>
+        <div class="nav-item" onclick="switchTab('settings', this)">
+            <div>⚙️</div>Tetapan
+        </div>
+    </div>
+
     <script>
-        // --- 1. DATA SUBJEK, NOTA, & CARA JAWAP STEP-BY-STEP ---
-        const subjectsData = [
-            {
-                id: 'matematik',
-                name: 'Matematik',
-                icon: '📐',
-                color: 'bg-emerald-600',
-                level: 'Tingkatan 1 - 5',
-                notes: [
-                    {
-                        title: 'Formula Luas & Isi Padu Segitiga',
-                        topic: 'Geometri & Pengukuran',
-                        summary: 'Penerangan lengkap formula tapak, tinggi dan contoh pengiraan berserta jalan kerja.',
-                        content: `
-                            <p class="mb-2"><strong>Formula Asas:</strong> Luas = ½ × Tapak × Tinggi</p>
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-2 mb-2">
-                                <p class="font-bold text-brand dark:text-brand-light">Contoh Soalan:</p>
-                                <p>Cari luas segitiga jika tapak = 12 cm dan tinggi = 8 cm.</p>
-                                <p class="font-bold text-gray-700 dark:text-gray-300">Jalan Kerja & Cara Jawab:</p>
-                                <p>1. Kenal pasti tapak (b) = 12 cm, tinggi (h) = 8 cm.</p>
-                                <p>2. Luas = ½ × 12 × 8</p>
-                                <p>3. Luas = 6 × 8 = <strong>48 cm²</strong>.</p>
-                            </div>
-                        `
-                    },
-                    {
-                        title: 'Teorem Pythagoras & Aplikasi',
-                        topic: 'Trigonometri',
-                        summary: 'Langkah penyelesaian panjang hipotenus bagi segitiga bersudut tegak.',
-                        content: `
-                            <p class="mb-2"><strong>Formula Utama:</strong> c² = a² + b² (di mana c ialah hipotenus)</p>
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-2">
-                                <p class="font-bold text-brand dark:text-brand-light">Contoh Soalan:</p>
-                                <p>Segitiga bersudut tegak mempunyai sisi tegak 6 cm dan 8 cm. Cari panjang hipotenus (c).</p>
-                                <p class="font-bold text-gray-700 dark:text-gray-300">Langkah Penyelesaian:</p>
-                                <p>1. c² = 6² + 8²</p>
-                                <p>2. c² = 36 + 64 = 100</p>
-                                <p>3. c = √100 = <strong>10 cm</strong>.</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'sains',
-                name: 'Sains',
-                icon: '🔬',
-                color: 'bg-blue-600',
-                level: 'Tingkatan 1 - 3',
-                notes: [
-                    {
-                        title: 'Proses Fotosintesis Lengkap',
-                        topic: 'Biologi & Tumbuhan',
-                        summary: 'Keperluan asas, persamaan kimia, dan hasil akhir fotosintesis.',
-                        content: `
-                            <p class="mb-2"><strong>Persamaan Fotosintesis:</strong></p>
-                            <div class="bg-blue-50 dark:bg-blue-950/40 p-2.5 rounded border border-blue-200 dark:border-blue-800 text-xs font-mono mb-2">
-                                Karbon Dioksida + Air + Cahaya Matahari → Glukosa + Oksigen
-                            </div>
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-1">
-                                <p class="font-bold">Proses Langkah Demi Langkah:</p>
-                                <p>1. Klorofil menyerap tenaga daripada cahaya matahari.</p>
-                                <p>2. Akar menyerap air dari tanah.</p>
-                                <p>3. Stomata daun menyerap karbon dioksida dari udara.</p>
-                                <p>4. Tumbuhan menghasilkan <strong>glukosa (makanan)</strong> dan membebaskan <strong>oksigen</strong>.</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'sejarah',
-                name: 'Sejarah',
-                icon: '📜',
-                color: 'bg-amber-600',
-                level: 'Tingkatan 1 - 5',
-                notes: [
-                    {
-                        title: 'Pengisytiharan Kemerdekaan 1957',
-                        topic: 'Kemerdekaan Negara',
-                        summary: 'Fakta penting, kronologi peristiwa, dan tokoh-tokoh Pejuang Kemerdekaan.',
-                        content: `
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-2">
-                                <p>• <strong>Tarikh Rasmi:</strong> 31 Ogos 1957</p>
-                                <p>• <strong>Lokasi Utama:</strong> Stadium Merdeka, Kuala Lumpur</p>
-                                <p>• <strong>Bapa Kemerdekaan:</strong> Tunku Abdul Rahman Putra Al-Haj</p>
-                                <p>• <strong>Peristiwa Khas:</strong> Laungan "MERDEKA!" sebanyak 7 kali di hadapan Raja-Raja Melayu dan ribuan rakyat.</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'bm',
-                name: 'Bahasa Melayu',
-                icon: '🇲🇾',
-                color: 'bg-red-600',
-                level: 'Tingkatan 1 - 5',
-                notes: [
-                    {
-                        title: 'Teknik Karangan & Tatabahasa',
-                        topic: 'Tatabahasa & Penulisan',
-                        summary: 'Format penulisan karangan cemerlang dan imbuhan kata kerja.',
-                        content: `
-                            <p class="mb-2"><strong>Formula Karangan Karangan Cemerlang (IPMK):</strong></p>
-                            <ul class="list-disc pl-4 text-xs space-y-1">
-                                <p>• <strong>I (Isu):</strong> Nyatakan isu semasa yang berkaitan topik.</p>
-                                <p>• <strong>P (Punca):</strong> Jelaskan faktor atau punca berlakunya isu.</p>
-                                <p>• <strong>M (Mengekang):</strong> Langkah mengatasi oleh pihak berkuasa/masyarakat.</p>
-                                <p>• <strong>K (Kesimpulan):</strong> Harapan dan cadangan penutup.</p>
-                            </ul>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'bi',
-                name: 'Bahasa Inggeris',
-                icon: '🔤',
-                color: 'bg-purple-600',
-                level: 'Form 1 - 5',
-                notes: [
-                    {
-                        title: 'Mastering English Tenses',
-                        topic: 'Grammar',
-                        summary: 'Difference between Simple Past Tense and Present Perfect Tense with practical usage.',
-                        content: `
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-2">
-                                <p><strong>Simple Past:</strong> Action completed at a specific time in the past.</p>
-                                <p class="italic text-gray-600 dark:text-gray-400">"I visited Melaka in 2022."</p>
-                                <hr class="border-gray-200 dark:border-brand-borderDark">
-                                <p><strong>Present Perfect:</strong> Action done in the past with relevance to the present.</p>
-                                <p class="italic text-gray-600 dark:text-gray-400">"I have visited Melaka three times."</p>
-                                <p class="text-brand font-bold">Rule: Have/Has + Past Participle (Verb 3)</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'fizik',
-                name: 'Fizik',
-                icon: '⚡',
-                color: 'bg-cyan-600',
-                level: 'Tingkatan 4 - 5',
-                notes: [
-                    {
-                        title: 'Hukum Gerakan Newton Kedua',
-                        topic: 'Daya dan Gerakan',
-                        summary: 'Formula daya F = ma dan contoh langkah pengiraan daya paduan.',
-                        content: `
-                            <p class="mb-2"><strong>Formula:</strong> F = ma (Daya = Jisim × Pecutan)</p>
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-1">
-                                <p class="font-bold">Contoh Soalan:</p>
-                                <p>Sebuah objek berjisim 5 kg dipecutkan pada 2 m/s². Berapakah daya (F) yang dikenakan?</p>
-                                <p class="font-bold mt-2">Penyelesaian Langkah demi Langkah:</p>
-                                <p>1. Jisim (m) = 5 kg, Pecutan (a) = 2 m/s²</p>
-                                <p>2. F = 5 × 2 = <strong>10 N (Newton)</strong>.</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'kimia',
-                name: 'Kimia',
-                icon: '🧪',
-                color: 'bg-teal-600',
-                level: 'Tingkatan 4 - 5',
-                notes: [
-                    {
-                        title: 'Jadual Berkala Unsur & Ikatan Kimia',
-                        topic: 'Jadual Berkala',
-                        summary: 'Kumpulan, Kala, dan pembentukan Ikatan Ionik vs Ikatan Kovalen.',
-                        content: `
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-2">
-                                <p>• <strong>Ikatan Ionik:</strong> Pemindahan elektron antara logam dan bukan logam.</p>
-                                <p>• <strong>Ikatan Kovalen:</strong> Perkongsian elektron antara unsur bukan logam.</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'biologi',
-                name: 'Biologi',
-                icon: '🧬',
-                color: 'bg-green-600',
-                level: 'Tingkatan 4 - 5',
-                notes: [
-                    {
-                        title: 'Struktur Sel Haiwan & Sel Tumbuhan',
-                        topic: 'Organel Sel',
-                        summary: 'Fungsi Mitokondria, Membran Sel, Kloroplas, dan Dinding Sel.',
-                        content: `
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-1">
-                                <p>• <strong>Mitokondria:</strong> Tapak penjanaan tenaga (ATP).</p>
-                                <p>• <strong>Kloroplas:</strong> Tapak fotosintesis (Tumbuhan sahaja).</p>
-                                <p>• <strong>Dinding Sel:</strong> Memberi bentuk tetap kepada sel tumbuhan.</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'geografi',
-                name: 'Geografi',
-                icon: '🌍',
-                color: 'bg-orange-600',
-                level: 'Tingkatan 1 - 3',
-                notes: [
-                    {
-                        title: 'Bentuk Muka Bumi di Malaysia',
-                        topic: 'Geografi Fizikal',
-                        summary: 'Ciri-ciri tanah tinggi, tanah pamah, dan pinggir laut.',
-                        content: `
-                            <p class="text-xs">Malaysia kaya dengan pelbagai bentuk muka bumi seperti Banjaran Titiwangsa yang menjadi tulang belakang Semenanjung Malaysia.</p>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'pi',
-                name: 'Pendidikan Islam',
-                icon: '🌙',
-                color: 'bg-emerald-700',
-                level: 'Tingkatan 1 - 5',
-                notes: [
-                    {
-                        title: 'Rukun Islam & Rukun Iman',
-                        topic: 'Ibadah & Aqidah',
-                        summary: 'Susunan rukun dan kefahaman mendalam mengenai tiang agama Islam.',
-                        content: `
-                            <div class="bg-gray-100 dark:bg-brand-surface p-3 rounded-lg text-xs space-y-1">
-                                <p><strong>Rukun Islam (5 Perkara):</strong> Mengucap dua kalimah syahadah, Solat, Puasa, Zakat, Menunaikan Haji.</p>
-                            </div>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'perniagaan',
-                name: 'Perniagaan',
-                icon: '💼',
-                color: 'bg-indigo-600',
-                level: 'Tingkatan 4 - 5',
-                notes: [
-                    {
-                        title: 'Bentuk Pemilikan Perniagaan',
-                        topic: 'Asas Perniagaan',
-                        summary: 'Milikan Tunggal, Perkongsian, Syarikat Berhad, dan Koperasi.',
-                        content: `
-                            <p class="text-xs"><strong>Milikan Tunggal:</strong> Perniagaan dimiliki oleh seorang individu sahaja. Liabiliti tidak terhad.</p>
-                        `
-                    }
-                ]
-            },
-            {
-                id: 'ekonomi',
-                name: 'Ekonomi',
-                icon: '📊',
-                color: 'bg-violet-600',
-                level: 'Tingkatan 4 - 5',
-                notes: [
-                    {
-                        title: 'Hukum Permintaan & Penawaran',
-                        topic: 'Pasaran Ekonomi',
-                        summary: 'Hubungan antara harga dan kuantiti barang yang diminta.',
-                        content: `
-                            <p class="text-xs"><strong>Hukum Permintaan:</strong> Apabila harga naik, kuantiti diminta akan berkurang (Hubungan songsang).</p>
-                        `
-                    }
-                ]
-            }
-        ];
+        // Pangkalan Data Nota Komprehensif Bab 1 hingga Akhir untuk Setiap Subjek
+        const dbNotes = {
+            "Matematik": [
+                { title: "Bab 1: Fungsi & Persamaan Kuadratik", content: "<strong>Konsep Asas:</strong> Ungkapan kuadratik dalam satu pemboleh ubah ialah $ax^2 + bx + c$.<br><strong>Cara Jawab Soalan Faktorkan:</strong> Cari dua nombor yang apabila didarab menghasilkan nilai $ac$ dan apabila dijumlahkan menghasilkan $b$." },
+                { title: "Bab 2: Asas Nombor", content: "<strong>Konsep Asas:</strong> Nombor dalam asas dua hingga asas sepuluh.<br><strong>Cara Jawab:</strong> Tukarkan nombor kepada nilai tempat asas yang diberikan (contoh: $2^0, 2^1, 2^2$) sebelum dicampur." },
+                { title: "Bab 3: Penakulan Logik", content: "<strong>Pernyataan:</strong> Ayat yang benar atau palsu tetapi bukan kedua-duanya sekali.<br><strong>Implikasi:</strong> Bentuk 'Jika p, maka q' (Antejadian dan Akibat)." },
+                { title: "Bab 4: Operasi Set", content: "<strong>Konsep:</strong> Persilangan set ($\cap$), Kesatuan set ($\cup$), dan Pelengkap bagi set ($$').<br><strong>Cara Jawab:</strong> Gunakan gambar rajah Venn untuk melorek kawasan yang dikehendaki dengan tepat." },
+                { title: "Bab 5: Rangkaian dalam Teori Graf", content: "<strong>Konsep:</strong> Darjah bucu, graf mudah, gelung, dan berbilang tepi.<br><strong>Formula Penting:</strong> Jumlah darjah bucu sentiasa dua kali bilangan tepi ($\sum d(v) = 2e$)." },
+                { title: "Bab 6: Ketaksamaan Linear", content: "<strong>Cara Jawab:</strong> Pastikan tanda ketaksamaan diterbalikkan ($<$ jadi $>$) apabila mendarab atau membahagi dengan nombor negatif." },
+                { title: "Bab 7: Graf Gerakan", content: "<strong>Konsep:</strong> Graf jarak-masa (kecerunan = laju) dan graf laju-masa (luas di bawah graf = jarak)." },
+                { title: "Bab 8: Sukatan Serakan", content: "<strong>Formula:</strong> Julat interquartil ($Q_3 - Q_1$), Varians, dan Sisihan Piawai." },
+                { title: "Bab 9: Garis Lurus", content: "<strong>Persamaan:</strong> $y = mx + c$ di mana $m$ ialah kecerunan dan $c$ ialah pintasan-$y$." }
+            ],
+            "Sains": [
+                { title: "Bab 1: Rangsangan & Gerak Balas", content: "<strong>Manusia & Haiwan:</strong> Sistem saraf pusat dan periferi.<br><strong>Tumbuhan:</strong> Tropisme (fototropisme, geotropisme, hidrotropisme, nastik)." },
+                { title: "Bab 2: Respirasi", content: "<strong>Struktur Sistem Respirasi:</strong> Alveoli sebagai tapak pertukaran gas secara resapan.<br><strong>Mekanisme Pernafasan:</strong> Perbezaan tekanan udara dada semasa menarik dan menghembus nafas." },
+                { title: "Bab 3: Pengangkutan", content: "<strong>Sistem Peredaran Darah:</strong> Peranan jantung, arteri, vena, dan kapilari darah." },
+                { title: "Bab 4: Kereaktifan Logam", content: "<strong>Siri Kereaktifan:</strong> Susunan logam mengikut tindak balasnya dengan oksigen (Kalsium, Magnesium, Aluminium, Karbon, Zink, Besi, Plumbum, Kuprum)." },
+                { title: "Bab 5: Termokimia", content: "<strong>Tindak Balas Eksotermik:</strong> Membebaskan haba (suhu persekitaran naik).<br><strong>Tindak Balas Endotermik:</strong> Menyerap haba (suhu persekitaran turun)." },
+                { title: "Bab 6: Elektrik & Kemagnetan", content: "<strong>Formula Utama:</strong> Ohm's Law ($V = IR$), Kuasa Elektrik ($P = IV$). Cara kira kos bil elektrik rumah." },
+                { title: "Bab 7: Tenaga Nuklear", content: "<strong>Pembelahan Nukleus:</strong> Nukleus berat membelah menghasilkan tenaga besar.<br><strong>Pelakuran Nukleus:</strong> Nukleus ringan bergabung." },
+                { title: "Bab 8: Teknologi Angkasa Lepas", content: "<strong>Alat Optik:</strong> Teleskop angkasa dan kegunaan satelit komunikasi." },
+                { title: "Bab 9: Karbon & Sebatian Organik", content: "Alkane, Alkene, Alkohol, Asid Carboxylic, dan Ester." },
+                { title: "Bab 10: Draf & Polimer", content: "Polimer semula jadi dan polimer sintetik (getah asli vs getah pemvulkanan)." }
+            ],
+            "Bahasa Melayu": [
+                { title: "Teknik Karangan Cemerlang (IPMK)", content: "<strong>I (Isu):</strong> Nyatakan isu semasa.<br><strong>P (Punca):</strong> Huraikan punca.<br><strong>M (Mengekang):</strong> Langkah mengatasi.<br><strong>K (Kesimpulan):</strong> Harapan penutup." },
+                { title: "Tatabahasa: Imbuhan & Kesalahan Ejaan", content: "<strong>Panduan Jawab:</strong> Kenal pasti jenis kata (nama, kerja, adjektif) sebelum menentukan imbuhan apitan yang tepat." },
+                { title: "Rumusan & Pemahaman Petikan", content: "<strong>Cara Jawab Rumusan:</strong> Cari pendahuluan, 2 isi tersurat pertama, 2 isi tersirat pertama, dan buat kesimpulan penutup ringkas." }
+            ],
+            "Sejarah": [
+                { title: "Bab 1: Warisan Negara Bangsa", content: "Ciri-ciri negara bangsa Kesultanan Melayu Melaka (Wilayah pengaruh, kedaulatan, undang-undang, rakyat)." },
+                { title: "Bab 2: Kebangkitan Nasionalisme", content: "Faktor penentangan pemimpin tempatan terhadap British (Tok Janggut, Dato' Maharajalela, Rentap)." },
+                { title: "Bab 3: Konflik Dunia & Pendudukan Jepun", content: "Kesan kedatangan Jepun di Tanah Melayu dari aspek politik, sosial, dan ekonomi." },
+                { title: "Bab 4: Era Perang Dingin & Persekutuan", content: "Malayan Union vs Persekutuan Tanah Melayu 1948." },
+                { title: "Bab 5: Persekutuan Tanah Melayu 1948", content: "Langkah ke arah kemerdekaan dan peranan Jawatankuasa Hubungan Antara Kaum (CLC)." },
+                { title: "Bab 6: Ancaman Komunis & Darurat", content: "Langkah British mengekang keganasan pengganas komunis (Rancangan Briggs, Perang Saraf)." },
+                { title: "Bab 7: Usaha Perundingan Kemerdekaan", content: "Rombongan merdeka ke London dipimpin oleh Tunku Abdul Rahman." },
+                { title: "Bab 8: Pelihara Kedaulatan Negara", content: "Makna kedaulatan dan cara rakyat mengekalkan keamanan." }
+            ],
+            "English": [
+                { title: "Grammar: Tenses Masterclass", content: "Mastering Past Simple, Present Perfect, and Future Continuous with contextual examples." },
+                { title: "Directed Writing (Formal Letter / Report)", content: "Format requirements: Sender address, receiver address, title, formal salutation, body paragraphs, and sign-off." },
+                { title: "Continuous Writing (Narrative & Descriptive)", content: "Using advanced vocabulary, idiom expressions, and hooks for opening paragraphs." }
+            ],
+            "Fizik": [
+                { title: "Bab 1: Measurement (Pengukuran)", content: "Base quantities, derived quantities, systematic errors vs random errors." },
+                { title: "Bab 2: Force & Motion (Daya & Gerakan)", content: "Linear motion equations, Newton's laws of motion, momentum conservation." },
+                { title: "Bab 3: Gravitation & Pressure", content: "Pascal's principle, Archimedes' principle, atmospheric pressure." }
+            ]
+        };
 
-        // --- 2. QUIZ DATABASE FOR ALL SUBJECTS ---
-        const quizQuestions = [
-            {
-                subjectId: 'matematik',
-                question: 'Jika tapak segitiga ialah 10 cm dan tingginya ialah 6 cm, berapakah luas segitiga tersebut?',
-                options: [
-                    { text: 'A. 60 cm²', correct: false, reason: 'Salah. Anda terlupa mendarab dengan ½.' },
-                    { text: 'B. 30 cm²', correct: true, reason: 'Betul! Luas = ½ × 10 × 6 = 30 cm².' },
-                    { text: 'C. 16 cm²', correct: false, reason: 'Salah. Itu ialah jumlah tambah tapak + tinggi.' }
-                ]
-            },
-            {
-                subjectId: 'sains',
-                question: 'Apakah gas yang membebaskan hasil daripada proses fotosintesis tumbuhan?',
-                options: [
-                    { text: 'A. Karbon Dioksida', correct: false, reason: 'Salah. Karbon dioksida diserap, bukan dibebaskan.' },
-                    { text: 'B. Oksigen', correct: true, reason: 'Betul! Oksigen dibebaskan ke udara semasa fotosintesis.' },
-                    { text: 'C. Nitrogen', correct: false, reason: 'Salah. Nitrogen tidak terlibat secara langsung.' }
-                ]
-            },
-            {
-                subjectId: 'sejarah',
-                question: 'Di manakah pengisytiharan Kemerdekaan Persekutuan Tanah Melayu diadakan pada 31 Ogos 1957?',
-                options: [
-                    { text: 'A. Stadium Merdeka, KL', correct: true, reason: 'Tepat! Diisytiharkan oleh Tunku Abdul Rahman di Stadium Merdeka.' },
-                    { text: 'B. Dataran Merdeka', correct: false, reason: 'Salah. Dataran Merdeka ialah lokasi penurunan bendera Union Jack malam 30 Ogos.' }
-                ]
-            },
-            {
-                subjectId: 'fizik',
-                question: 'Unit SI bagi daya dalam Fizik ialah:',
-                options: [
-                    { text: 'A. Joule (J)', correct: false, reason: 'Salah. Joule ialah unit SI bagi Tenaga/Kerja.' },
-                    { text: 'B. Newton (N)', correct: true, reason: 'Betul! Daya diukur dalam Newton (N).' }
-                ]
-            },
-            {
-                subjectId: 'biologi',
-                question: 'Organel manakah yang dikenali sebagai "rumah tenaga" (powerhouse) sel?',
-                options: [
-                    { text: 'A. Mitokondria', correct: true, reason: 'Tepat! Mitokondria menjana tenaga ATP.' },
-                    { text: 'B. Nukleus', correct: false, reason: 'Salah. Nukleus mengawal aktiviti sel.' }
-                ]
-            }
-        ];
+        // Buka Subjek Terperinci (Bab 1 - Akhir)
+        function openSubject(subjectName) {
+            document.getElementById('subjectHome').style.display = 'none';
+            document.getElementById('subjectDetailView').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'inline-block';
+            document.getElementById('headerTitle').innerText = subjectName;
 
-        // Global State Variables
-        let activeSubjectId = null;
-        let quizAnswersState = {};
-        let examTimerInterval = null;
-        let examTimeRemaining = 300; // 5 minutes (in seconds)
-        let examUserAnswers = {};
+            let container = document.getElementById('chapterContainer');
+            container.innerHTML = '';
 
-        // DOM Initialization
-        window.addEventListener('DOMContentLoaded', () => {
-            renderSubjectsGrid();
-            renderQuizSubjectChips();
-            renderQuizQuestions('all');
-        });
-
-        // --- NAVIGATION CONTROLLER ---
-        function switchTab(tabName, navBtn) {
-            // Reset header back button if exiting subject view
-            document.getElementById('backBtn').classList.add('hidden');
-            document.getElementById('appHeaderTitle').innerText = 'Dotlock Pro';
-            document.getElementById('appHeaderSubtitle').innerText = 'Pusat Pembelajaran & Ujian Subjek';
-
-            document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
-            document.getElementById('view-single-subject').classList.add('hidden');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-brand', 'dark:text-brand-light', 'font-semibold');
-                btn.classList.add('text-gray-400', 'font-medium');
-            });
-
-            if (navBtn) {
-                navBtn.classList.remove('text-gray-400', 'font-medium');
-                navBtn.classList.add('text-brand', 'dark:text-brand-light', 'font-semibold');
-            }
-
-            document.getElementById('view-' + tabName).classList.remove('hidden');
-            window.scrollTo(0, 0);
-        }
-
-        function navBack() {
-            switchTab('subjects');
-        }
-
-        // --- 1. SUBJECTS HUB & SINGLE SUBJECT VIEW ---
-        function renderSubjectsGrid() {
-            const container = document.getElementById('subjectsGrid');
-            container.innerHTML = subjectsData.map(sub => `
-                <div onclick="openSubjectView('${sub.id}')" 
-                    class="bg-white dark:bg-brand-cardDark p-3.5 rounded-2xl border border-gray-200 dark:border-brand-borderDark shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-2xl p-2 rounded-xl bg-gray-50 dark:bg-brand-surface">${sub.icon}</span>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 dark:bg-brand-surface text-gray-600 dark:text-gray-300">${sub.level}</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-gray-800 dark:text-white">${sub.name}</h3>
-                        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">${sub.notes.length} Nota & Cara Jawab</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openSubjectView(subjectId) {
-            const subject = subjectsData.find(s => s.id === subjectId);
-            if (!subject) return;
-
-            activeSubjectId = subjectId;
-
-            // Hide main tab views & show single subject view
-            document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
-            document.getElementById('view-single-subject').classList.remove('hidden');
-
-            // Header Update
-            document.getElementById('backBtn').classList.remove('hidden');
-            document.getElementById('appHeaderTitle').innerText = subject.name;
-            document.getElementById('appHeaderSubtitle').innerText = 'Nota & Penyelesaian Soalan';
-
-            // Subject Banner Update
-            const banner = document.getElementById('subjectBanner');
-            banner.className = `${subject.color} p-4 rounded-2xl text-white mb-4 shadow-sm transition-all`;
-            document.getElementById('subBannerIcon').innerText = subject.icon;
-            document.getElementById('subBannerTitle').innerText = subject.name;
-            document.getElementById('subBannerDesc').innerText = `Koleksi nota terperinci & panduan cara jawab step-by-step bagi subjek ${subject.name}.`;
-
-            renderSubjectNotes(subject.notes);
-            window.scrollTo(0, 0);
-        }
-
-        function renderSubjectNotes(notes) {
-            const container = document.getElementById('subjectNotesContainer');
-            if (notes.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-gray-400 text-xs">
-                        Tiada nota dijumpai untuk carian ini.
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = notes.map((note, index) => `
-                <div class="bg-white dark:bg-brand-cardDark rounded-2xl border border-gray-200 dark:border-brand-borderDark shadow-sm overflow-hidden">
-                    <div class="p-4">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-brand dark:text-brand-light bg-brand/10 px-2 py-0.5 rounded-md">${note.topic}</span>
-                        </div>
-                        <h3 class="font-bold text-base text-gray-900 dark:text-white">${note.title}</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${note.summary}</p>
-                    </div>
-
-                    <!-- Steps Solution / Detailed Content -->
-                    <div id="note-body-${index}" class="px-4 pb-4 pt-2 border-t border-gray-100 dark:border-brand-borderDark text-xs text-gray-700 dark:text-gray-200 leading-relaxed">
-                        ${note.content}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function filterSubjectNotes() {
-            const query = document.getElementById('subjectNoteSearch').value.toLowerCase();
-            const subject = subjectsData.find(s => s.id === activeSubjectId);
-            if (!subject) return;
-
-            const filtered = subject.notes.filter(note => 
-                note.title.toLowerCase().includes(query) || 
-                note.topic.toLowerCase().includes(query) ||
-                note.summary.toLowerCase().includes(query)
-            );
-            renderSubjectNotes(filtered);
-        }
-
-        function filterSubjectsAndNotes() {
-            const query = document.getElementById('globalSearchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('#subjectsGrid > div');
-            
-            subjectsData.forEach((sub, idx) => {
-                const matches = sub.name.toLowerCase().includes(query) || 
-                                sub.notes.some(n => n.title.toLowerCase().includes(query));
-                if (cards[idx]) {
-                    cards[idx].style.display = matches ? 'flex' : 'none';
-                }
-            });
-        }
-
-        // --- 2. KUIZ & LATIHAN CONTROLLER ---
-        function renderQuizSubjectChips() {
-            const container = document.getElementById('quizSubjectChips');
-            let html = `
-                <button onclick="renderQuizQuestions('all', this)" class="quiz-chip bg-brand text-white font-semibold text-xs px-3.5 py-1.5 rounded-full whitespace-nowrap shadow-sm">
-                    Semua Subjek
-                </button>
-            `;
-
-            subjectsData.forEach(sub => {
-                html += `
-                    <button onclick="renderQuizQuestions('${sub.id}', this)" class="quiz-chip bg-white dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 font-medium text-xs px-3.5 py-1.5 rounded-full border border-gray-200 dark:border-brand-borderDark whitespace-nowrap">
-                        ${sub.icon} ${sub.name}
-                    </button>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function renderQuizQuestions(subjectId, chipEl) {
-            if (chipEl) {
-                document.querySelectorAll('.quiz-chip').forEach(c => {
-                    c.className = 'quiz-chip bg-white dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 font-medium text-xs px-3.5 py-1.5 rounded-full border border-gray-200 dark:border-brand-borderDark whitespace-nowrap';
+            let notes = dbNotes[subjectName];
+            if (notes) {
+                notes.forEach((item, index) => {
+                    let box = document.createElement('div');
+                    box.className = 'chapter-box';
+                    box.innerHTML = `
+                        <div class="chapter-title">${item.title}</div>
+                        <div class="chapter-content">${item.content}</div>
+                    `;
+                    container.appendChild(box);
                 });
-                chipEl.className = 'quiz-chip bg-brand text-white font-semibold text-xs px-3.5 py-1.5 rounded-full whitespace-nowrap shadow-sm';
-            }
-
-            const container = document.getElementById('quizQuestionsContainer');
-            const questions = subjectId === 'all' 
-                ? quizQuestions 
-                : quizQuestions.filter(q => q.subjectId === subjectId);
-
-            if (questions.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-gray-400 text-xs">
-                        Tiada soalan kuiz khusus untuk subjek ini lagi. Soalan baharu akan ditambah secara berkala!
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = questions.map((q, idx) => `
-                <div class="bg-white dark:bg-brand-cardDark p-4 rounded-2xl border border-gray-200 dark:border-brand-borderDark shadow-sm">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-brand/10 text-brand dark:text-brand-light uppercase">
-                            ${q.subjectId}
-                        </span>
-                        <span class="text-xs font-semibold text-gray-400">Soalan ${idx + 1}</span>
-                    </div>
-                    <p class="font-bold text-sm text-gray-900 dark:text-white mb-3">${q.question}</p>
-
-                    <div class="space-y-2">
-                        ${q.options.map((opt, oIdx) => `
-                            <button onclick="answerQuiz(${idx}, ${oIdx}, ${opt.correct}, '${opt.reason.replace(/'/g, "\\'")}')" 
-                                id="q-${idx}-opt-${oIdx}"
-                                class="w-full text-left p-3 rounded-xl border border-gray-200 dark:border-brand-borderDark bg-gray-50 dark:bg-brand-surface text-xs font-medium text-gray-800 dark:text-gray-200 transition-all hover:border-brand">
-                                ${opt.text}
-                            </button>
-                        `).join('')}
-                    </div>
-
-                    <div id="q-${idx}-feedback" class="hidden mt-3 p-3 rounded-xl text-xs leading-relaxed"></div>
-                </div>
-            `).join('');
-        }
-
-        function answerQuiz(qIdx, oIdx, isCorrect, reason) {
-            quizAnswersState[qIdx] = isCorrect;
-
-            // Highlight chosen option
-            const feedbackBox = document.getElementById(`q-${qIdx}-feedback`);
-            feedbackBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'dark:bg-green-950/50', 'dark:text-green-300', 'dark:bg-red-950/50', 'dark:text-red-300');
-
-            if (isCorrect) {
-                feedbackBox.classList.add('bg-green-100', 'text-green-800', 'dark:bg-green-950/50', 'dark:text-green-300');
-                feedbackBox.innerHTML = `<strong>✅ TAHNIAH! Jawapan Betul.</strong><br>${reason}`;
             } else {
-                feedbackBox.classList.add('bg-red-100', 'text-red-800', 'dark:bg-red-950/50', 'dark:text-red-300');
-                feedbackBox.innerHTML = `<strong>❌ JAWAPAN KURANG TEPAT.</strong><br>${reason}`;
+                container.innerHTML = `<p style="text-align:center; color:var(--text-sub);">Nota lengkap sedang dikemaskini.</p>`;
             }
-
-            // Update score
-            const answeredKeys = Object.keys(quizAnswersState);
-            const correctCount = Object.values(quizAnswersState).filter(Boolean).length;
-            const percent = Math.round((correctCount / answeredKeys.length) * 100);
-
-            document.getElementById('quizScoreText').innerText = `${correctCount} / ${answeredKeys.length} Dijawab Betul`;
-            document.getElementById('quizScoreBadge').innerText = `${percent}%`;
+            window.scrollTo(0,0);
         }
 
-        // --- 3. UJIAN SIMULASI (EXAM MODE) CONTROLLER ---
-        function startExam() {
-            document.getElementById('examIntroCard').classList.add('hidden');
-            document.getElementById('examActiveCard').classList.remove('hidden');
-            document.getElementById('examResultCard').classList.add('hidden');
-
-            examTimeRemaining = 300; // 5 minutes
-            examUserAnswers = {};
-
-            renderExamQuestions();
-            startExamTimer();
+        // Kembali ke Halaman Utama Subjek
+        function goBackToHome() {
+            document.getElementById('subjectDetailView').style.display = 'none';
+            document.getElementById('subjectHome').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('headerTitle').innerText = 'Dotlock Pro Mega';
+            window.scrollTo(0,0);
         }
 
-        function renderExamQuestions() {
-            const container = document.getElementById('examQuestionsList');
-            container.innerHTML = quizQuestions.map((q, idx) => `
-                <div class="bg-white dark:bg-brand-cardDark p-4 rounded-2xl border border-gray-200 dark:border-brand-borderDark shadow-sm">
-                    <p class="font-bold text-xs text-brand dark:text-brand-light mb-1">Soalan ${idx + 1} (${q.subjectId.toUpperCase()})</p>
-                    <p class="font-bold text-sm text-gray-900 dark:text-white mb-3">${q.question}</p>
-                    <div class="space-y-2">
-                        ${q.options.map((opt, oIdx) => `
-                            <label class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 dark:border-brand-borderDark bg-gray-50 dark:bg-brand-surface text-xs text-gray-800 dark:text-gray-200 cursor-pointer hover:border-brand">
-                                <input type="radio" name="exam-q-${idx}" value="${opt.correct}" onclick="examUserAnswers[${idx}] = ${opt.correct}">
-                                <span>${opt.text}</span>
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
+        // Navigasi Tab
+        function switchTab(tabName, navEl) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            if(navEl) navEl.classList.add('active');
 
-        function startExamTimer() {
-            clearInterval(examTimerInterval);
-            examTimerInterval = setInterval(() => {
-                examTimeRemaining--;
-                const minutes = Math.floor(examTimeRemaining / 60);
-                const seconds = examTimeRemaining % 60;
-                document.getElementById('examTimer').innerText = 
-                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                if (examTimeRemaining <= 0) {
-                    clearInterval(examTimerInterval);
-                    submitExam();
-                }
-            }, 1000);
-        }
-
-        function submitExam() {
-            clearInterval(examTimerInterval);
-
-            const total = quizQuestions.length;
-            let correct = 0;
-
-            for (let i = 0; i < total; i++) {
-                if (examUserAnswers[i] === true) {
-                    correct++;
-                }
+            if(tabName !== 'notes') {
+                goBackToHome();
             }
-
-            const percentage = Math.round((correct / total) * 100);
-
-            let grade = 'F';
-            let analysis = '';
-
-            if (percentage >= 90) { grade = 'A+'; analysis = 'Prestasi Cemerlang! Anda sangat menguasai konsep semua subjek.'; }
-            else if (percentage >= 75) { grade = 'A'; analysis = 'Keputusan Sangat Baik! Teruskan ulang kaji untuk mengekalkan prestasi.'; }
-            else if (percentage >= 50) { grade = 'C'; analysis = 'Lulus. Disyorkan membaca nota subjek untuk memantapkan pemahaman.'; }
-            else { grade = 'G'; analysis = 'Perlu Lebih Latihan. Sila semak nota cara jawab terperinci di menu Subjek.'; }
-
-            document.getElementById('examFinalGrade').innerText = grade;
-            document.getElementById('examScoreDetail').innerText = `${correct} / ${total}`;
-            document.getElementById('examPercentDetail').innerText = `${percentage}%`;
-            document.getElementById('examAnalysisText').innerText = analysis;
-
-            document.getElementById('examActiveCard').classList.add('hidden');
-            document.getElementById('examResultCard').classList.remove('hidden');
+            window.scrollTo(0, 0);
         }
 
-        function resetExam() {
-            document.getElementById('examIntroCard').classList.remove('hidden');
-            document.getElementById('examActiveCard').classList.add('hidden');
-            document.getElementById('examResultCard').classList.add('hidden');
+        // Semakan Kuiz
+        function checkQuiz(btn, isCorrect, resultId) {
+            let resDiv = document.getElementById(resultId);
+            resDiv.style.display = "block";
+            if (isCorrect) {
+                resDiv.className = "quiz-result correct";
+                resDiv.innerText = "✅ TAHNIAH! Jawapan anda tepat sekali.";
+            } else {
+                resDiv.className = "quiz-result wrong";
+                resDiv.innerText = "❌ Kurang tepat. Sila cuba lagi!";
+            }
         }
 
-        // --- 4. DARK MODE CONTROLLER ---
+        // Carian Subjek Halaman Utama
+        function searchSubjects() {
+            let input = document.getElementById('searchHome').value.toLowerCase();
+            let cards = document.querySelectorAll('.subject-card');
+            cards.forEach(card => {
+                let name = card.querySelector('.subject-name').innerText.toLowerCase();
+                card.style.display = name.includes(input) ? "" : "none";
+            });
+        }
+
+        // Toggle Mod Gelap
         function toggleDarkMode() {
-            const isDark = document.body.classList.toggle('dark');
-            const switchEl = document.getElementById('darkModeSwitch');
-            if (switchEl) switchEl.checked = isDark;
+            document.body.classList.toggle('dark-mode');
         }
     </script>
 </body>
