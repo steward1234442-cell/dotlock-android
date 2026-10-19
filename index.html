@@ -1,55 +1,61 @@
-<!DOCTYPE html>
+<    <!-- TA<!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dotlock - App Pelajar Pro</title>
+    <title>Dotlock App</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { margin: 0; padding: 0; background-color: #f0f2f5; color: #1c1e21; padding-bottom: 70px; }
+        body { margin: 0; padding: 0; background-color: #f0f2f5; color: #1c1e21; padding-bottom: 75px; }
 
-        /* Header Gaya WhatsApp / App Moden */
-        .app-header { background-color: #075e54; color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
-        .app-header h1 { margin: 0; font-size: 20px; }
-        .header-icons span { margin-left: 15px; font-size: 18px; cursor: pointer; }
+        /* App Header */
+        .app-header { background-color: #075e54; color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; }
+        .app-header h1 { margin: 0; font-size: 20px; font-weight: 600; }
 
-        /* Navigation Tabs / Filter Bar */
-        .filter-bar { display: flex; overflow-x: auto; background: white; padding: 10px 15px; border-bottom: 1px solid #ddd; gap: 8px; }
-        .chip { background: #e4e6eb; border: none; padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; white-space: nowrap; font-weight: 500; }
+        /* Filter Chips */
+        .filter-bar { display: flex; overflow-x: auto; background: white; padding: 12px 15px; border-bottom: 1px solid #e0e0e0; gap: 8px; scrollbar-width: none; }
+        .chip { background: #e4e6eb; border: none; padding: 7px 15px; border-radius: 20px; font-size: 13px; cursor: pointer; font-weight: 500; color: #333; }
         .chip.active { background: #128c7e; color: white; }
 
         /* Search Section */
-        .search-container { padding: 12px 15px; background: white; }
-        .search-box { width: 100%; padding: 10px 15px; border: 1px solid #ccc; border-radius: 20px; outline: none; background: #f0f2f5; font-size: 14px; }
+        .search-container { padding: 12px 15px; background: white; border-bottom: 1px solid #f0f0f0; }
+        .search-box { width: 100%; padding: 11px 16px; border: 1px solid #ccc; border-radius: 22px; outline: none; background: #f0f2f5; font-size: 14px; }
 
-        /* Container Main Section */
+        /* Main Container */
         .tab-content { display: none; padding: 15px; }
         .tab-content.active { display: block; }
 
-        /* Feed / Card Style */
-        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        /* Cards */
+        .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
         .card-title { font-weight: bold; color: #075e54; font-size: 16px; margin: 0; }
-        .badge { background: #dcf8c6; color: #075e54; font-size: 11px; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
-        .card-body { color: #4a4a4a; font-size: 14px; line-height: 1.4; display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee; }
-        .action-btns { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: #666; }
-        .btn-action { background: none; border: none; color: #128c7e; cursor: pointer; font-weight: bold; }
+        .badge { background: #dcf8c6; color: #075e54; font-size: 11px; padding: 4px 8px; border-radius: 8px; font-weight: 600; }
+        .card-sub { font-size: 12px; color: #777; margin-bottom: 10px; }
+        
+        .card-body { color: #333; font-size: 14px; line-height: 1.5; display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #ddd; }
+        .btn-toggle { background: #f0f2f5; border: none; color: #075e54; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; width: 100%; text-align: center; margin-top: 8px; }
+
+        /* Quiz Styling */
+        .quiz-opt { width: 100%; text-align: left; padding: 12px; margin-top: 8px; border: 1px solid #e0e0e0; background: #fafafa; border-radius: 8px; font-size: 14px; cursor: pointer; }
+        .quiz-result { margin-top: 10px; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 13px; display: none; }
+        .correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
         /* Settings View */
-        .setting-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .setting-item label { font-size: 15px; font-weight: 500; }
+        .setting-item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .setting-item label { font-size: 14px; font-weight: 500; }
 
-        /* Bottom Navigation Bar (Macam App Sebenar) */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
-        .nav-item { text-align: center; color: #666; font-size: 11px; text-decoration: none; cursor: pointer; flex: 1; }
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+        .nav-item { text-align: center; color: #777; font-size: 11px; cursor: pointer; flex: 1; }
         .nav-item.active { color: #075e54; font-weight: bold; }
         .nav-item div { font-size: 18px; margin-bottom: 2px; }
 
-        /* Dark Mode Styling */
+        /* Dark Mode */
         body.dark-mode { background-color: #121212; color: #e0e0e0; }
         body.dark-mode .app-header { background-color: #1f1f1f; }
         body.dark-mode .card, body.dark-mode .setting-item, body.dark-mode .search-container, body.dark-mode .filter-bar, body.dark-mode .bottom-nav { background-color: #1e1e1e; border-color: #333; }
-        body.dark-mode .search-box { background-color: #2c2c2c; color: white; border-color: #444; }
+        body.dark-mode .search-box, body.dark-mode .quiz-opt, body.dark-mode .btn-toggle { background-color: #2c2c2c; color: white; border-color: #444; }
         body.dark-mode .card-title { color: #25d366; }
         body.dark-mode .nav-item { color: #aaa; }
         body.dark-mode .nav-item.active { color: #25d366; }
@@ -60,16 +66,12 @@
     <!-- Header App -->
     <div class="app-header">
         <h1>Dotlock App</h1>
-        <div class="header-icons">
-            <span onclick="alert('Notifikasi: Tiada mesej baharu')">🔔</span>
-            <span onclick="switchTab('settings')">⚙️</span>
-        </div>
+        <div style="font-size: 18px; cursor: pointer;" onclick="switchTab('settings')">⚙️</div>
     </div>
 
-    <!-- TAB 1: NOTA & PILIHAN SUBJEK -->
+    <!-- TAB 1: NOTA & SUBJEK -->
     <div id="tab-notes" class="tab-content active">
         
-        <!-- Filter Category Chips -->
         <div class="filter-bar">
             <button class="chip active" onclick="filterSubject('all', this)">Semua</button>
             <button class="chip" onclick="filterSubject('Matematik', this)">📐 Matematik</button>
@@ -78,92 +80,121 @@
             <button class="chip" onclick="filterSubject('English', this)">🔤 English</button>
         </div>
 
-        <!-- Search Bar -->
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Cari tajuk, topik, soalan..." onkeyup="searchCards()">
+            <input type="text" id="searchInput" class="search-box" placeholder="Cari topik, soalan, atau nota..." onkeyup="searchCards()">
         </div>
 
-        <!-- List Nota / Kandungan -->
         <div id="notesList">
             
+            <!-- Matematik 1 -->
             <div class="card" data-subject="Matematik">
                 <div class="card-header">
-                    <p class="card-title">Formula Luas Segitiga</p>
+                    <p class="card-title">Formula Luas Segitiga & Contoh</p>
                     <span class="badge">Matematik</span>
                 </div>
-                <div class="action-btns">
-                    <span>Tingkatan 1-3</span>
-                    <button class="btn-action" onclick="toggleCard(this)">Buka Jawapan ▼</button>
-                </div>
+                <div class="card-sub">Tingkatan 1 - 3</div>
+                <button class="btn-toggle" onclick="toggleCard(this)">Lihat Penerangan ▼</button>
                 <div class="card-body">
-                    <strong>Formula:</strong> Luas = ½ × Tapak × Tinggi<br><br>
-                    <strong>Contoh Soalan:</strong> Cari luas jika tapak = 10cm, tinggi = 5cm.<br>
-                    <strong>Jalan Kerja:</strong> ½ × 10 × 5 = 25 cm².
+                    <strong>Formula Asas:</strong><br>
+                    Luas = ½ × Tapak × Tinggi<br><br>
+                    <strong>Langkah Penyelesaian Soalan:</strong><br>
+                    1. Kenalpasti panjang tapak (contoh: 8 cm).<br>
+                    2. Kenalpasti tinggi tegak (contoh: 5 cm).<br>
+                    3. Kirakan: ½ × 8 × 5 = <strong>20 cm²</strong>.
                 </div>
             </div>
 
+            <!-- Matematik 2 -->
+            <div class="card" data-subject="Matematik">
+                <div class="card-header">
+                    <p class="card-title">Teorem Pythagoras</p>
+                    <span class="badge">Matematik</span>
+                </div>
+                <div class="card-sub">Tingkatan 3</div>
+                <button class="btn-toggle" onclick="toggleCard(this)">Lihat Penerangan ▼</button>
+                <div class="card-body">
+                    <strong>Formula:</strong> c² = a² + b²<br><br>
+                    <strong>Guna apabila:</strong> Mencari panjang hipotenus (sisi paling panjang) dalam segitiga bersudut tegak.
+                </div>
+            </div>
+
+            <!-- Sains 1 -->
             <div class="card" data-subject="Sains">
                 <div class="card-header">
                     <p class="card-title">Proses Fotosintesis</p>
                     <span class="badge">Sains</span>
                 </div>
-                <div class="action-btns">
-                    <span>Tingkatan 2</span>
-                    <button class="btn-action" onclick="toggleCard(this)">Buka Jawapan ▼</button>
-                </div>
+                <div class="card-sub">Tingkatan 2</div>
+                <button class="btn-toggle" onclick="toggleCard(this)">Lihat Penerangan ▼</button>
                 <div class="card-body">
-                    Tumbuhan hijau membuat makanan menggunakan <strong>Cahaya Matahari + Air + Karbon Dioksida + Klorofil</strong>.<br><br>
-                    <strong>Hasil:</strong> Glukosa & Oksigen.
+                    <strong>Bahan Diperlukan:</strong><br>
+                    • Cahaya Matahari<br>
+                    • Karbon Dioksida<br>
+                    • Air & Klorofil<br><br>
+                    <strong>Hasil Proses:</strong> Glukosa (Makanan) + Oksigen.
                 </div>
             </div>
 
+            <!-- Sejarah 1 -->
             <div class="card" data-subject="Sejarah">
                 <div class="card-header">
-                    <p class="card-title">Kemerdekaan Tanah Melayu</p>
+                    <p class="card-title">Pengisytiharan Kemerdekaan</p>
                     <span class="badge">Sejarah</span>
                 </div>
-                <div class="action-btns">
-                    <span>Tingkatan 4</span>
-                    <button class="btn-action" onclick="toggleCard(this)">Buka Jawapan ▼</button>
-                </div>
+                <div class="card-sub">Tingkatan 4</div>
+                <button class="btn-toggle" onclick="toggleCard(this)">Lihat Penerangan ▼</button>
                 <div class="card-body">
                     • <strong>Tarikh:</strong> 31 Ogos 1957<br>
-                    • <strong>Lokasi:</strong> Stadium Merdeka, KL<br>
-                    • <strong>Bapa Kemerdekaan:</strong> Tunku Abdul Rahman.
+                    • <strong>Lokasi:</strong> Stadium Merdeka, Kuala Lumpur<br>
+                    • <strong>Tokoh Utama:</strong> Tunku Abdul Rahman Putra Al-Haj (Bapa Kemerdekaan).
                 </div>
             </div>
 
+            <!-- English 1 -->
             <div class="card" data-subject="English">
                 <div class="card-header">
-                    <p class="card-title">Grammar: Past vs Present Tense</p>
+                    <p class="card-title">Simple Past Tense vs Present Perfect</p>
                     <span class="badge">English</span>
                 </div>
-                <div class="action-btns">
-                    <span>General</span>
-                    <button class="btn-action" onclick="toggleCard(this)">Buka Jawapan ▼</button>
-                </div>
+                <div class="card-sub">Grammar</div>
+                <button class="btn-toggle" onclick="toggleCard(this)">Lihat Penerangan ▼</button>
                 <div class="card-body">
-                    • <strong>Past Tense:</strong> Used for completed actions (e.g., <em>I walked to school yesterday</em>).<br>
-                    • <strong>Present Tense:</strong> Used for habits (e.g., <em>I walk to school every day</em>).
+                    • <strong>Simple Past:</strong> Perkara yang siap di masa lampau.<br>
+                    <em>Example:</em> "I ate lunch at 1 PM."<br><br>
+                    • <strong>Present Perfect:</strong> Perkara yang dah berlaku tapi masih berkaitan dengan waktu sekarang.<br>
+                    <em>Example:</em> "I have eaten lunch already."
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- TAB 2: KUIZ / LATIHAN -->
+    <!-- TAB 2: KUIZ INTERAKTIF (TANPA POP-UP BROWSER) -->
     <div id="tab-quiz" class="tab-content">
-        <h3>🎯 Kuiz Ringkas Hari Ini</h3>
+        <h3 style="margin-top:0;">🎯 Latihan & Kuiz Ringkas</h3>
+        
+        <!-- Soalan 1 -->
         <div class="card">
-            <p><strong>Soalan 1:</strong> Apakah hasil utama daripada proses fotosintesis?</p>
-            <button class="chip" onclick="alert('Salah! Cuba lagi.')">A. Karbon Dioksida</button><br><br>
-            <button class="chip" onclick="alert('TAHNIAH! Jawapan Betul! 🎉')">B. Glukosa & Oksigen</button>
+            <p><strong>Soalan 1 (Sains):</strong> Apakah hasil utama daripada proses fotosintesis?</p>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1-res')">A. Karbon Dioksida & Nitrogen</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'q1-res')">B. Glukosa & Oksigen</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1-res')">C. Air & Klorofil</button>
+            <div id="q1-res" class="quiz-result"></div>
+        </div>
+
+        <!-- Soalan 2 -->
+        <div class="card">
+            <p><strong>Soalan 2 (Matematik):</strong> Jika tapak segitiga ialah 6 cm dan tingginya 4 cm, berapakah luasnya?</p>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2-res')">A. 24 cm²</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'q2-res')">B. 12 cm²</button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2-res')">C. 10 cm²</button>
+            <div id="q2-res" class="quiz-result"></div>
         </div>
     </div>
 
-    <!-- TAB 3: TETAPAN (SETTINGS) -->
+    <!-- TAB 3: TETAPAN -->
     <div id="tab-settings" class="tab-content">
-        <h3>⚙️ Tetapan Aplikasi</h3>
+        <h3 style="margin-top:0;">⚙️ Tetapan Aplikasi</h3>
         
         <div class="setting-item">
             <label>🌙 Mod Gelap (Dark Mode)</label>
@@ -171,22 +202,17 @@
         </div>
 
         <div class="setting-item">
-            <label>🔔 Notifikasi Latihan</label>
+            <label>🔔 Notifikasi Peringatan</label>
             <input type="checkbox" checked>
         </div>
 
         <div class="setting-item">
-            <label>👤 Profil Pelajar</label>
-            <span style="color: #666;">Steward (Tingkatan 4)</span>
-        </div>
-
-        <div class="setting-item" onclick="alert('Dotlock App v2.0 - Dibina oleh Steward')" style="cursor:pointer;">
             <label>ℹ️ Perihal Aplikasi</label>
-            <span>v2.0</span>
+            <span style="color: #666; font-size: 13px;">Dotlock App v2.1</span>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar (WhatsApp / App Style) -->
+    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('notes', this)">
             <div>📚</div>
@@ -205,13 +231,13 @@
     <script>
         // Buka/Tutup Jawapan Kad
         function toggleCard(btn) {
-            let body = btn.parentElement.nextElementSibling;
+            let body = btn.nextElementSibling;
             if (body.style.display === "block") {
                 body.style.display = "none";
-                btn.innerText = "Buka Jawapan ▼";
+                btn.innerText = "Lihat Penerangan ▼";
             } else {
                 body.style.display = "block";
-                btn.innerText = "Tutup ▲";
+                btn.innerText = "Tutup Penerangan ▲";
             }
         }
 
@@ -222,6 +248,20 @@
             
             document.getElementById('tab-' + tabName).classList.add('active');
             if(navEl) navEl.classList.add('active');
+        }
+
+        // Semakan Kuiz Tanpa Pop-up Alert
+        function checkQuiz(btn, isCorrect, resultId) {
+            let resDiv = document.getElementById(resultId);
+            resDiv.style.display = "block";
+            
+            if (isCorrect) {
+                resDiv.className = "quiz-result correct";
+                resDiv.innerText = "✅ TAHNIAH! Jawapan anda betul.";
+            } else {
+                resDiv.className = "quiz-result wrong";
+                resDiv.innerText = "❌ Jawapan kurang tepat. Sila cuba lagi!";
+            }
         }
 
         // Carian Real-time
@@ -235,7 +275,7 @@
             });
         }
 
-        // Penapis Subjek (Filter)
+        // Filter Subjek
         function filterSubject(subject, chipEl) {
             document.querySelectorAll('.filter-bar .chip').forEach(c => c.classList.remove('active'));
             chipEl.classList.add('active');
@@ -250,7 +290,7 @@
             });
         }
 
-        // Mod Gelap (Dark Mode) Toggle
+        // Toggle Dark Mode
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
         }
@@ -258,3 +298,4 @@
 
 </body>
 </html>
+B 1: NOTA & PILIHAN SUBJEK -
